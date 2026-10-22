@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Adote e cuide de gatinhos virtuais fofos. Alimente, brinque e veja seu gatinho crescer feliz!">
+<title>Miau Virtual - Adote um Gatinho</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  :root{
+    --roxo:#5B3E96; --roxo-esc:#3F2A6B; --rosa:#FF7BAC;
+    --amarelo:#FFD166; --verde:#8BD17C; --txt:#2E2438; --card:#FFFFFF;
+  }
+  body{
+    font-family:'Trebuchet MS','Segoe UI',Arial,sans-serif;
+    background:linear-gradient(160deg,#5B3E96 0%,#7B5BB8 45%,#B48BD6 100%);
+    min-height:100vh; color:var(--txt); padding-bottom:40px;
+  }
+  header{ text-align:center; padding:28px 16px 18px; color:#fff; }
+  header .logo{ font-size:44px; font-weight:900; letter-spacing:-1px; text-shadow:0 4px 0 rgba(0,0,0,.18); }
+  header .logo span{ color:var(--amarelo); }
+  header p{ margin-top:8px; font-size:15px; opacity:.95; }
+
+  .wrap{ max-width:1080px; margin:0 auto; padding:0 16px; }
+
+  .grid{ display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; margin:8px 0 28px; }
+  .card{
+    background:var(--card); border-radius:22px; padding:0 0 20px;
+    box-shadow:0 10px 24px rgba(0,0,0,.18); text-align:center;
+    position:relative; overflow:hidden; transition:transform .18s, box-shadow .18s;
+  }
+  .card:hover{ transform:translateY(-4px); box-shadow:0 16px 32px rgba(0,0,0,.24); }
+  .card .foto{
+    width:100%; height:190px; object-fit:cover; display:block;
+    background:#E5DDF0; border-bottom:5px solid var(--amarelo);
+  }
+  .card .corpo{ padding:16px 16px 0; }
+  .card h3{ font-size:21px; margin-bottom:2px; }
+  .card .raca{ font-size:12.5px; color:#8b7fa0; margin-bottom:10px; }
+  .card .pers{ font-size:13px; color:#6b5f7e; line-height:1.45; min-height:58px; margin-bottom:12px; }
+
+  .btn{
+    border:none; cursor:pointer; font-family:inherit; font-weight:700;
+    border-radius:50px; padding:12px 22px; font-size:15px;
+    transition:filter .15s, transform .1s; display:inline-block;
+  }
+  .btn:active{ transform:scale(.97); }
+  .btn-adotar{ background:var(--rosa); color:#fff; width:100%; }
+  .btn-adotar:hover{ filter:brightness(1.08); }
+  .btn:disabled{ background:#D9D2E3 !important; color:#9A8FB0 !important; cursor:not-allowed; }
+
+  .tag-adotado{
+    position:absolute; top:16px; right:-34px; transform:rotate(38deg);
+    background:var(--verde); color:#fff; font-size:11px; font-weight:800;
+    padding:6px 40px; letter-spacing:1px; box-shadow:0 2px 6px rgba(0,0,0,.25);
+  }
+
+  .meu{
+    background:rgba(255,255,255,.14); border:2px dashed rgba(255,255,255,.5);
+    border-radius:24px; padding:20px; color:#fff; margin-bottom:26px;
+  }
+  .meu h2{ font-size:22px; margin-bottom:14px; text-align:center; }
+  .meu.vazio p{ text-align:center; opacity:.9; font-size:15px; padding:14px 0; }
+  .painel{ display:grid; grid-template-columns:220px 1fr; gap:20px; align-items:center; }
+  .painel .cena{ background:rgba(0,0,0,.16); border-radius:18px; padding:8px; text-align:center; }
+  .painel .cena img{ width:100%; height:200px; object-fit:cover; border-radius:12px; display:block; }
+  .barras{ display:flex; flex-direction:column; gap:11px; }
+  .barra-lbl{ display:flex; justify-content:space-between; font-size:13px; font-weight:700; margin-bottom:4px; }
+  .barra{ height:16px; background:rgba(0,0,0,.28); border-radius:20px; overflow:hidden; }
+  .barra i{ display:block; height:100%; width:0%; border-radius:20px; transition:width .5s ease; }
+  .b-fome i{ background:linear-gradient(90deg,#FFB347,#FF8C42); }
+  .b-fel i{ background:linear-gradient(90deg,#FF9EC4,#FF7BAC); }
+  .b-ene i{ background:linear-gradient(90deg,#7EE0C8,#3FBF9F); }
+  .acoes{ display:flex; gap:10px; flex-wrap:wrap; margin-top:16px; justify-content:center; }
+  .btn-acao{ background:#fff; color:var(--roxo); padding:11px 20px; font-size:14px; }
+  .btn-acao:hover{ filter:brightness(.96); }
+  .humor{ text-align:center; font-size:14px; margin-top:12px; font-style:italic; opacity:.95; min-height:20px; }
+
+  .toast{
+    position:fixed; left:50%; transform:translateX(-50%) translateY(-140%);
+    top:16px; background:var(--roxo-esc); color:#fff;
+    padding:13px 24px; border-radius:50px; font-weight:700; font-size:14.5px;
+    box-shadow:0 10px 26px rgba(0,0,0,.35); transition:transform .35s ease; z-index:99;
+  }
+  .toast.on{ transform:translateX(-50%) translateY(0); }
+
+  footer{ text-align:center; color:rgba(255,255,255,.75); font-size:12px; margin-top:30px; line-height:1.7; }
+
+  @media(max-width:560px){
+    .painel{ grid-template-columns:1fr; justify-items:center; }
+    .painel .cena{ width:100%; }
+    .barras{ width:100%; }
+    header .logo{ font-size:34px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Miau<span>Virtual</span></div>
+  <p>Adote um gatinho virtual e cuide dele com muito carinho 🐾</p>
+</header>
+
+<div class="wrap">
+
+  <div class="meu vazio" id="meuBloco">
+    <h2>Meu Gatinho</h2>
+    <p id="meuVazio">Você ainda não adotou nenhum gatinho. Escolha um abaixo! 🐱</p>
+    <div id="meuPainel" style="display:none">
+      <div class="painel">
+        <div class="cena"><img id="fotoGrande" src="" alt="Meu gatinho"></div>
+        <div class="barras">
+          <div>
+            <div class="barra-lbl"><span>🍖 Fome</span><span id="vFome">100%</span></div>
+            <div class="barra b-fome"><i id="bFome"></i></div>
+          </div>
+          <div>
+            <div class="barra-lbl"><span>💖 Felicidade</span><span id="vFel">100%</span></div>
+            <div class="barra b-fel"><i id="bFel"></i></div>
+          </div>
+          <div>
+            <div class="barra-lbl"><span>⚡ Energia</span><span id="vEne">100%</span></div>
+            <div class="barra b-ene"><i id="bEne"></i></div>
+          </div>
+        </div>
+      </div>
+      <div class="acoes">
+        <button class="btn btn-acao" onclick="acao('alimentar')">🍖 Alimentar</button>
+        <button class="btn btn-acao" onclick="acao('brincar')">🧶 Brincar</button>
+        <button class="btn btn-acao" onclick="acao('dormir')">😴 Dormir</button>
+        <button class="btn btn-acao" onclick="acao('carinho')">🤗 Carinho</button>
+      </div>
+      <div class="humor" id="humor"></div>
+    </div>
+  </div>
+
+  <div class="grid" id="grid"></div>
+
+  <footer>
+    Miau Virtual © 2026 — Projeto de gatinhos virtuais.<br>
+    Todos os direitos reservados.
+  </footer>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var GATINHOS = [
+  { id:'luna',  nome:'Luna',   raca:'Gata siamesa',     pers:'Curiosa e dorminhoca. Adora tomar sol na janela e mia quando quer colo.',
+    foto:'https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?w=600&q=80' },
+  { id:'mimi',  nome:'Mimi',   raca:'Gatinha tricolor', pers:'Brincalhona e tagarela. Nunca recusa um novelo de la ou uma caixa vazia.',
+    foto:'https://images.unsplash.com/photo-1573865526739-10659fec78a5?w=600&q=80' },
+  { id:'tigrao',nome:'Tigrao', raca:'Gato laranja',     pers:'Aventureiro e corajoso. O rei da casa, mas tem um coracao enorme.',
+    foto:'https://images.unsplash.com/photo-1495360010541-f48722b34f7d?w=600&q=80' },
+  { id:'nina',  nome:'Nina',   raca:'Gata preta',       pers:'Misteriosa e elegante. Adora o silencio da noite e passear pelo telhado.',
+    foto:'https://images.unsplash.com/photo-1519052537078-e6302a4968d4?w=600&q=80' },
+  { id:'bolota',nome:'Bolota', raca:'Gato cinza',       pers:'Calmo e comilao. Seu passatempo favorito e cochilar depois de um bom lanche.',
+    foto:'https://images.unsplash.com/photo-1533738363-b7f9aef128ce?w=600&q=80' },
+  { id:'fofo',  nome:'Fofo',   raca:'Gatinha branca',   pers:'Meiga e carinhosa. Segue voce pela casa e ronrona no seu colo por horas.',
+    foto:'https://images.unsplash.com/photo-1592194996308-7b43878e84a6?w=600&q=80' }
+];
+
+var adotados = {};
+var atual = null;
+
+function porc(v){ return Math.max(0, Math.min(100, Math.round(v))); }
+
+function renderGrid(){
+  var g = document.getElementById('grid');
+  var html = '';
+  for(var i=0;i<GATINHOS.length;i++){
+    var k = GATINHOS[i];
+    var ad = adotados[k.id];
+    html += '<div class="card">';
+    if(ad) html += '<div class="tag-adotado">ADOTADO</div>';
+    html += '<img class="foto" src="' + k.foto + '" alt="' + k.nome + '" loading="lazy">';
+    html += '<div class="corpo">';
+    html += '<h3>' + k.nome + '</h3>';
+    html += '<div class="raca">' + k.raca + '</div>';
+    html += '<div class="pers">' + k.pers + '</div>';
+    if(ad){
+      html += '<button class="btn btn-adotar" disabled>Ja e seu!</button>';
+    } else {
+      html += '<button class="btn btn-adotar" onclick="adotar(\'' + k.id + '\')">Adotar ' + k.nome + '</button>';
+    }
+    html += '</div></div>';
+  }
+  g.innerHTML = html;
+}
+
+function achar(id){
+  for(var i=0;i<GATINHOS.length;i++){ if(GATINHOS[i].id===id) return GATINHOS[i]; }
+  return null;
+}
+
+function adotar(id){
+  if(adotados[id]) return;
+  var k = achar(id);
+  adotados[id] = { fome:80, fel:80, ene:80 };
+  atual = id;
+  renderGrid();
+  abrirPainel();
+  toast('Voce adotou o(a) ' + k.nome + '! 🎉');
+}
+
+function abrirPainel(){
+  if(!atual) return;
+  var k = achar(atual);
+  document.getElementById('meuBloco').classList.remove('vazio');
+  document.querySelector('#meuBloco h2').textContent = 'Meu Gatinho - ' + k.nome;
+  document.getElementById('meuVazio').style.display = 'none';
+  document.getElementById('meuPainel').style.display = 'block';
+  document.getElementById('fotoGrande').src = k.foto;
+  atualizar();
+}
+
+function atualizar(){
+  if(!atual) return;
+  var s = adotados[atual];
+  document.getElementById('bFome').style.width = porc(s.fome) + '%';
+  document.getElementById('bFel').style.width  = porc(s.fel)  + '%';
+  document.getElementById('bEne').style.width  = porc(s.ene)  + '%';
+  document.getElementById('vFome').textContent = porc(s.fome) + '%';
+  document.getElementById('vFel').textContent  = porc(s.fel)  + '%';
+  document.getElementById('vEne').textContent  = porc(s.ene)  + '%';
+  var media = (porc(s.fome) + porc(s.fel) + porc(s.ene)) / 3;
+  var h;
+  if(media >= 80) h = 'Seu gatinho esta radiante e cheio de amor! 😻';
+  else if(media >= 60) h = 'Seu gatinho esta feliz, continue cuidando bem! 😺';
+  else if(media >= 40) h = 'Seu gatinho esta precisando de atencao... 🐱';
+  else h = 'Seu gatinho esta tristinho, cuide dele! 😿';
+  document.getElementById('humor').textContent = h;
+}
+
+function acao(o){
+  if(!atual){ toast('Adote um gatinho primeiro! 🐾'); return; }
+  var s = adotados[atual];
+  var k = achar(atual);
+  var nome = k ? k.nome : 'seu gatinho';
+
+  if(o === 'alimentar'){
+    if(s.fome >= 98){ toast(nome + ' ja esta satisfeito(a)! 😸'); return; }
+    s.fome = porc(s.fome + 22); s.ene = porc(s.ene + 5); s.fel = porc(s.fel + 4);
+    toast(nome + ' adorou a comida! 🍖');
+  } else if(o === 'brincar'){
+    if(s.ene <= 12){ toast(nome + ' esta cansado(a), deixe dormir! 😴'); return; }
+    s.fel = porc(s.fel + 20); s.ene = porc(s.ene - 16); s.fome = porc(s.fome - 8);
+    toast(nome + ' se divertiu muito! 🧶');
+  } else if(o === 'dormir'){
+    if(s.ene >= 98){ toast(nome + ' ja esta descansado(a)! ⚡'); return; }
+    s.ene = porc(s.ene + 30); s.fome = porc(s.fome - 10);
+    toast('Zzz... ' + nome + ' dormiu um cochilo gostoso! 😴');
+  } else if(o === 'carinho'){
+    s.fel = porc(s.fel + 12); s.ene = porc(s.ene + 4);
+    toast(nome + ' esta ronronando de felicidade! 🥰');
+  }
+  atualizar();
+}
+
+var toastTimer = null;
+function toast(msg){
+  var el = document.getElementById('toast');
+  el.textContent = msg;
+  el.classList.add('on');
+  if(toastTimer) clearTimeout(toastTimer);
+  toastTimer = setTimeout(function(){ el.classList.remove('on'); }, 2200);
+}
+
+setInterval(function(){
+  for(var id in adotados){
+    var s = adotados[id];
+    s.fome = porc(s.fome - 2);
+    s.fel  = porc(s.fel  - 1);
+    s.ene  = porc(s.ene  + 1);
+  }
+  atualizar();
+}, 45000);
+
+renderGrid();
+</script>
+</body>
+</html>
